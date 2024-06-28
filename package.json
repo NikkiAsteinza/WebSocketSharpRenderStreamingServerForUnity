@@ -1,10 +1,10 @@
 {
   "name": "websocketrepotest",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node main.js",
-    "secure-start": "node main.js secure",
+    "start": "node app.js",
+    "secure-start": "node app.js secure",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
