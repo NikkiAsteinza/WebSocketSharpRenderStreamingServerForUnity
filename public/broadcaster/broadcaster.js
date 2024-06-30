@@ -1,4 +1,4 @@
-import { fetchConfig, getBroadcastingImageWidth, getBroadcastingImageHeight,getBroadcastingImageFormat } from './config.js';
+import { fetchConfig, getBroadcastingImageWidth, getBroadcastingImageHeight,getBroadcastingImageFormat } from '../config.js';
 
 let imageWidth, imageHeight, imageFormat;
 
@@ -63,17 +63,17 @@ navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: imageWidth }, 
             // Stop sending frames when WebSocket is closed
             ws.onclose = () => {
                 console.log('WebSocket connection closed');
+                console.log(sender + "-" + e.Reason);
+
                 clearInterval(sendInterval);
+            };
+            
+            ws.onerror = (error) => {
+                console.error('WebSocket error: ', error);
             };
         };
 
-        ws.onerror = (error) => {
-            console.error('WebSocket error: ', error);
-        };
 
-        ws.OnClose += (sender, e) => {
-            console.log(sender + "-" + e.Reason);
-        };
     })
     .catch(error => {
         console.error('Error accessing display media.', error);
