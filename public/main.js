@@ -8,6 +8,8 @@ config = getConfig();
 const broadcastButton = document.getElementById("broadcastButton");
 const receiverButton = document.getElementById("receiverButton");
 
+
+
 broadcastButton.addEventListener('click', function() {
     window.location.href = '/broadcaster/main.html';
 });

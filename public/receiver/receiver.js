@@ -2,13 +2,23 @@ let ws;
 
 import {fetchConfig, getConfig} from '../config.js';
 
-let config;
+let config, targetChannel;
+const inputSelector = document.getElementById("inputSelector");
+inputSelector.addEventListener('change', function(){
+    const seletorValue = inputSelector.value;
+    console.log(seletorValue);
+    targetChannel = seletorValue === 0? config.RECEIVER_CHANNEL: config.BROADCASTER_CHANNEL;
+    console.log(targetChannel);
+})
+
+
 
 await fetchConfig();
 config = getConfig();
-
+targetChannel = config.RECEIVER_CHANNEL;
 
 console.log(`Config: ${config}`);
+
 function initializeWebSocket() {
     ws = new WebSocket(`ws://localhost:${config.PORT}`);
 
@@ -20,7 +30,7 @@ function initializeWebSocket() {
         try {
             const message = JSON.parse(event.data);
 
-            if (message.id ===  config.RECEIVER_CHANNEL) {
+            if (message.id ===  targetChannel) {
                 console.log("Unity message received");
                 const base64Data = message.imageData;
                 const imgWidth = message.width;
@@ -44,8 +54,6 @@ function initializeWebSocket() {
                     console.error('Image failed to load');
                 };
                 img.src = 'data:image/png;base64,' + base64Data;
-            } else {
-                console.error('Unexpected message id:', message.id);
             }
         } catch (error) {
             console.error('Error processing message:', error);
