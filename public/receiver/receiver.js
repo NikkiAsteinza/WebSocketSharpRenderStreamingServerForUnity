@@ -1,8 +1,16 @@
-const wsUrl = 'ws://localhost:3000';
 let ws;
 
+import {fetchConfig, getConfig} from '../config.js';
+
+let config;
+
+await fetchConfig();
+config = getConfig();
+
+
+console.log(`Config: ${config}`);
 function initializeWebSocket() {
-    ws = new WebSocket(wsUrl);
+    ws = new WebSocket(`ws://localhost:${config.PORT}`);
 
     ws.onopen = function() {
         console.log('WebSocket connection established');
@@ -12,7 +20,7 @@ function initializeWebSocket() {
         try {
             const message = JSON.parse(event.data);
 
-            if (message.id === 'UnityVR') {
+            if (message.id ===  config.RECEIVER_CHANNEL) {
                 console.log("Unity message received");
                 const base64Data = message.imageData;
                 const imgWidth = message.width;
@@ -28,7 +36,7 @@ function initializeWebSocket() {
                     canvas.width = imgWidth;
                     canvas.height = imgHeight;
                     ctx.drawImage(img, 0, 0, imgWidth, imgHeight);
-                    const imageData = canvas.toDataURL('image/png');
+                    const imageData = canvas.toDataURL(config.IMAGE_FORMAT);
                     imgElement.src = imageData;
                     console.log('Image updated');
                 };

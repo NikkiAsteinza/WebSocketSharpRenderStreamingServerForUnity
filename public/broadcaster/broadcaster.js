@@ -1,21 +1,19 @@
-import { fetchConfig, getBroadcastingImageWidth, getBroadcastingImageHeight,getBroadcastingImageFormat } from '../config.js';
+import {fetchConfig, getConfig} from '../config.js';
 
-let imageWidth, imageHeight, imageFormat;
+let config;
 
 await fetchConfig();
+config = getConfig();
 
-imageWidth = getBroadcastingImageWidth();
-imageHeight = getBroadcastingImageHeight();
-imageFormat = getBroadcastingImageFormat();
 
-console.log(`Size: ${imageWidth} x ${imageHeight}`);
+console.log(`Config: ${config}`);
 
-navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: imageWidth }, height: { ideal: imageHeight } } })
+navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: config.BROADCASTING_WIDTH }, height: { ideal: config.BROADCASTING_HEIGHT } } })
     .then(stream => {
         console.log('Display media stream obtained');
         video.srcObject = stream;
 
-        const ws = new WebSocket('ws://localhost:3000');
+        const ws = new WebSocket(`ws://localhost:${config.PORT}`);
 
         ws.onopen = () => {
             console.log('WebSocket connection established');
@@ -31,9 +29,8 @@ navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: imageWidth }, 
             // Function to send frames over WebSocket
             const sendFrame = () => {
                 if (video.videoWidth && video.videoHeight) {
-                    // Set higher resolution for the canvas
-                    canvas.width = imageWidth;
-                    canvas.height = imageHeight;
+                    canvas.width =  config.BROADCASTING_WIDTH;
+                    canvas.height =  config.BROADCASTING_HEIGHT;
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                     canvas.toBlob((blob) => {
                         if (blob) {
@@ -42,7 +39,7 @@ navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: imageWidth }, 
                             reader.onloadend = () => {
                                 const base64data = reader.result.split(',')[1];
                                 const message = {
-                                    id: 'webcomponent',
+                                    id: config.BROADCASTER_CHANNEL,
                                     width: canvas.width,
                                     height: canvas.height,
                                     imageData: base64data
@@ -51,7 +48,7 @@ navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: imageWidth }, 
                                 console.log('Sent frame:', message);
                             };
                         }
-                    }, imageFormat, 0.95); // Adjust quality parameter if necessary
+                    }, config.IMAGE_FORMAT, 0.95); // Adjust quality parameter if necessary
                 } else {
                     console.warn('Video width or height is zero');
                 }
