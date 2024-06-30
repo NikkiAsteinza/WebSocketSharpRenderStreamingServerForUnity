@@ -1,5 +1,9 @@
-const wsUrl = 'ws://localhost:3000';
-let ws;
+import {fetchConfig, getConfig} from '../config.js';
+
+let config,ws;
+
+await fetchConfig();
+config = getConfig();
 
 const broadcastButton = document.getElementById("broadcastButton");
 const receiverButton = document.getElementById("receiverButton");
@@ -13,7 +17,7 @@ receiverButton.addEventListener('click', function() {
 });
 
 function initializeWebSocket() {
-    ws = new WebSocket(wsUrl);
+    ws = new WebSocket(`ws://localhost:${config.PORT}`);
 
     ws.onopen = function() {
         console.log('WebSocket connection established');
@@ -23,11 +27,16 @@ function initializeWebSocket() {
         try {
             const message = JSON.parse(event.data);
 
-            if (message.id === 'webcomponent') {
+            if (message.id === config.BROADCASTER_CHANNEL) {
                 broadcastButton.disabled = true;
-                receiverButton.disabled = true;
+                receiverButton.disabled = false;
             }
-            else if(message.id === 'UnityVR'){
+            else if(message.id === config.RECEIVER_CHANNEL){
+                receiverButton.disabled = false;
+            }
+            else
+            {
+                broadcastButton.disabled = false;
                 receiverButton.disabled = false;
             }
         } catch (error) {

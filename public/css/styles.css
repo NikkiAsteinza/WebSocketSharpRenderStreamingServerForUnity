@@ -21,18 +21,25 @@ body{
     box-sizing: border-box;
     padding:10px;
 }
-
-button{
-    width:40%;
-    height:100px;
-    border: 1px solid #51B58C;
-    padding: 5px 10px;
-}
-
 button:disabled{
     color:#595959;
     background-color: lightgrey;
+    text-decoration: line-through;
 }
+.button{
+    width:40%;
+    height:100px;
+    border: 5px solid #51B58C;
+    background-color: transparent;
+    padding: 5px 10px;
+}
+.button:hover{
+    transition:  all 0.4s;
+    color:#191834;
+    background-color: #51B58C;
+}
+
+
 
 select{
     color:#51B58C;
