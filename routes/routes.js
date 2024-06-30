@@ -3,10 +3,12 @@ const router = Router();
 
 router.get('/getConfig', (req, res) => {
     res.json({
-        width: process.env.BROADCASTING_WIDTH,
-        height: process.env.BROADCASTING_HEIGHT,
-        format: process.env.IMAGE_FORMAT,
-        broadcastChannel: process.env.RECEIVER_CHANNEL
+        PORT: process.env.PORT,
+        BROADCASTING_WIDTH: process.env.BROADCASTING_WIDTH,
+        BROADCASTING_HEIGHT: process.env.BROADCASTING_HEIGHT,
+        IMAGE_FORMAT: process.env.IMAGE_FORMAT,
+        BROADCASTER_CHANNEL: process.env.BROADCASTER_CHANNEL,
+        RECEIVER_CHANNEL: process.env.RECEIVER_CHANNEL
     });
 });
 
