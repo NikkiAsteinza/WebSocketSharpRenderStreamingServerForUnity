@@ -8,11 +8,14 @@ const path = require('path');
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
+console.log("Custom Render Streaming Server for Unity - Nikki");
 
 // Arguments
 const argument = process.argv.slice(2);
 const isSecureServer = argument == "secure";
-console.log(`Is secure server ${isSecureServer}`);
+
+const runHelp = isSecureServer? 'start to go over http':'secure-start to go over https';
+console.log(`Is secure server: \n- ${isSecureServer} (npm ${runHelp})`);
 
 //Get local ip address
 'use strict';
@@ -80,14 +83,16 @@ wss.on('connection', (ws) => {
 // Server starts listening
 if(isSecureServer){
     httpsServer.listen(process.env.SECURE_PORT, () => {
-        console.log(`Server is accessible at http://${address}:${process.env.SECURE_PORT}`);
+        console.log(`Server is accessible at https://${address}:${process.env.SECURE_PORT}`);
     });
 }
 else{
     server.listen(process.env.PORT, () => {
+        console.log("Server is accessible at:");
+        console.log(`- http://localhost:${process.env.PORT}`);
         for (const name of Object.keys(results)) {
             for (const address of results[name]) {
-                console.log(`Server is accessible at http://${address}:${process.env.PORT}`);
+                console.log(`- http://${address}:${process.env.PORT}`);
             }
         }
     });
