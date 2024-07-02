@@ -5,7 +5,6 @@ let config;
 await fetchConfig();
 config = getConfig();
 
-
 console.log(`Config: ${config}`);
 
 navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: config.BROADCASTING_WIDTH }, height: { ideal: config.BROADCASTING_HEIGHT } } })
@@ -69,8 +68,6 @@ navigator.mediaDevices.getDisplayMedia({ video: { width: { ideal: config.BROADCA
                 console.error('WebSocket error: ', error);
             };
         };
-
-
     })
     .catch(error => {
         console.error('Error accessing display media.', error);

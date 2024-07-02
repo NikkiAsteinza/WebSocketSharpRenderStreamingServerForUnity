@@ -83,7 +83,7 @@ wss.on('connection', (ws) => {
 // Server starts listening
 if(isSecureServer){
     httpsServer.listen(process.env.SECURE_PORT, () => {
-        console.log(`Server is accessible at http://${address}:${process.env.SECURE_PORT}`);
+        console.log(`Server is accessible at https://${address}:${process.env.SECURE_PORT}`);
     });
 }
 else{
