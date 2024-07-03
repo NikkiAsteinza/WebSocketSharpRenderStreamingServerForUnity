@@ -1,13 +1,21 @@
 require('dotenv').config()
 const express = require('express');
 const http = require('http');
+const fs = require('fs');
+const https = require('https');
 const WebSocket = require('ws');
 const cors = require('cors');
 const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+
+const secureServer = https.createServer({
+    cert: fs.readFileSync('client-1.local.crt'),
+    key: fs.readFileSync('client-1.local.key')
+  },app)
+
+  const wss = new WebSocket.Server({ server });
 console.log("Custom Render Streaming Server for Unity - Nikki");
 
 // Arguments
@@ -82,8 +90,12 @@ wss.on('connection', (ws) => {
 
 // Server starts listening
 if(isSecureServer){
-    httpsServer.listen(process.env.SECURE_PORT, () => {
-        console.log(`Server is accessible at https://${address}:${process.env.SECURE_PORT}`);
+    secureServer.listen(process.env.SECURE_PORT, () => {
+        for (const name of Object.keys(results)) {
+            for (const address of results[name]) {
+                console.log(`- https://${address}:${process.env.SECURE_PORT}`);
+            }
+        }
     });
 }
 else{
