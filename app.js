@@ -7,6 +7,10 @@ const WebSocket = require('ws');
 const cors = require('cors');
 const path = require('path');
 
+// Arguments
+const argument = process.argv.slice(2);
+const isSecureServer = argument == "secure";
+
 const app = express();
 const server = http.createServer(app);
 
@@ -15,12 +19,11 @@ const secureServer = https.createServer({
     key: fs.readFileSync('client-1.local.key')
   },app)
 
-  const wss = new WebSocket.Server({ server });
-console.log("Custom Render Streaming Server for Unity - Nikki");
+let currentServer = isSecureServer? secureServer : server ;
 
-// Arguments
-const argument = process.argv.slice(2);
-const isSecureServer = argument == "secure";
+const wss = new WebSocket.Server({server: currentServer});
+
+console.log("Custom Render Streaming Server for Unity - Nikki");
 
 const runHelp = isSecureServer? 'start to go over http':'secure-start to go over https';
 console.log(`Is secure server: \n- ${isSecureServer} (npm ${runHelp})`);
@@ -89,23 +92,14 @@ wss.on('connection', (ws) => {
 });
 
 // Server starts listening
-if(isSecureServer){
-    secureServer.listen(process.env.SECURE_PORT, () => {
-        for (const name of Object.keys(results)) {
-            for (const address of results[name]) {
-                console.log(`- https://${address}:${process.env.SECURE_PORT}`);
-            }
+const targetPort = isSecureServer? process.env.SECURE_PORT : process.env.PORT;
+currentServer.listen(targetPort, () => {
+    console.log("Server is accessible at:");
+    const connectionString =  isSecureServer? 'https':'http';
+    console.log(`- ${connectionString}://localhost:${targetPort}`);
+    for (const name of Object.keys(results)) {
+        for (const address of results[name]) {
+            console.log(`- ${connectionString}://${address}:${targetPort}`);
         }
-    });
-}
-else{
-    server.listen(process.env.PORT, () => {
-        console.log("Server is accessible at:");
-        console.log(`- http://localhost:${process.env.PORT}`);
-        for (const name of Object.keys(results)) {
-            for (const address of results[name]) {
-                console.log(`- http://${address}:${process.env.PORT}`);
-            }
-        }
-    });
-}
+    }
+});
